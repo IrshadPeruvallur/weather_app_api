@@ -23,7 +23,7 @@ class WeatherServiceProvider extends ChangeNotifier {
       final response = await http.get(Uri.parse(apiUrl));
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        print('$data dkkfka');
+        print('$data');
         _weather = WeatherModel.fromJson(data);
         notifyListeners();
       } else {
