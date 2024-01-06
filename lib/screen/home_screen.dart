@@ -7,17 +7,16 @@ import 'package:weather_app_api/widgets/home_screen_widget.dart';
 
 class HomeScreen extends StatelessWidget {
   HomeScreen({Key? key}) : super(key: key);
+
   final dateAndDay = DateFormat('MMMM, dd ,EEEE').format(DateTime.now());
-
   final time = DateFormat('hh:mm a').format(DateTime.now());
-
-  final List colorTheme = [Colors.white, Colors.black];
-
-  TextEditingController searchController = TextEditingController();
+  final List<Color> colorTheme = [Colors.white, Colors.black];
 
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
+    final getProvider =
+        Provider.of<WeatherServiceProvider>(context, listen: false);
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
@@ -26,7 +25,8 @@ class HomeScreen extends StatelessWidget {
         title: Padding(
           padding: const EdgeInsets.only(left: 20),
           child: TextField(
-            controller: searchController,
+            // onTap: () => getProvider.aa(),
+            controller: getProvider.searchController,
             decoration: InputDecoration(
               prefixIcon: Icon(Icons.location_on, color: Colors.white),
               hintText: "Search City",
@@ -47,13 +47,21 @@ class HomeScreen extends StatelessWidget {
         actions: [
           Padding(
             padding: const EdgeInsets.all(20),
-            child: IconButton(
-                onPressed: () {
-                  final getPrd = Provider.of<WeatherServiceProvider>(context,
-                      listen: false);
-                  getPrd.fetchWeatherDataByCity(searchController.text.trim());
-                },
-                icon: Icon(Icons.search)),
+            child: Consumer<WeatherServiceProvider>(
+              builder: (context, value, child) {
+                return value.searchController.text.isNotEmpty
+                    ? IconButton(
+                        onPressed: () {
+                          searchCity(context);
+                        },
+                        icon: Icon(Icons.search))
+                    : IconButton(
+                        onPressed: () {
+                          refreshCurrentLocationWeather(context);
+                        },
+                        icon: Icon(Icons.refresh));
+              },
+            ),
           )
         ],
       ),
@@ -189,5 +197,49 @@ class HomeScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  void searchCity(BuildContext context) {
+    final weatherProvider =
+        Provider.of<WeatherServiceProvider>(context, listen: false);
+    weatherProvider.fetchWeatherDataByCity(
+        weatherProvider.searchController.text.trim(), context);
+    weatherProvider.searchController.clear();
+  }
+
+  void refreshCurrentLocationWeather(BuildContext context) async {
+    final weatherProvider =
+        Provider.of<WeatherServiceProvider>(context, listen: false);
+    // weatherProvider.isSearchClicked = true;
+
+    final locationProvider =
+        Provider.of<LocationProvider>(context, listen: false);
+    await locationProvider.determinePosition();
+
+    if (locationProvider.currentLocationName != null) {
+      var city = locationProvider.currentLocationName!.locality;
+      if (city != null) {
+        weatherProvider.fetchWeatherDataByCity(city, context);
+      }
+    } else {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text("Location Error"),
+          content: Text(
+              "Please ensure you have an internet connection and location services enabled."),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text('Close'),
+            ),
+          ],
+        ),
+      );
+    }
+    final snackBar = SnackBar(content: Text("Refreshed for current city."));
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 }

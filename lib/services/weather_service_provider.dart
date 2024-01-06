@@ -12,7 +12,9 @@ class WeatherServiceProvider extends ChangeNotifier {
   bool get isLoading => _isLoading;
   String _error = '';
   String get error => _error;
-  Future<void> fetchWeatherDataByCity(String city) async {
+  TextEditingController searchController = TextEditingController();
+
+  Future<void> fetchWeatherDataByCity(String city, context) async {
     _isLoading = true;
     _error = '';
     try {
@@ -27,6 +29,10 @@ class WeatherServiceProvider extends ChangeNotifier {
         _weather = WeatherModel.fromJson(data);
         notifyListeners();
       } else {
+        final snackBar = SnackBar(
+            backgroundColor: Colors.red, content: Text("City not found"));
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+
         _error = 'Failed to load data';
         print(_error);
       }

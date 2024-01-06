@@ -17,10 +17,10 @@ class _LoadingScreenState extends State<LoadingScreen> {
   @override
   void initState() {
     super.initState();
-    determineLocationAndFetchWeather();
+    determineLocationAndFetchWeather(context);
   }
 
-  void determineLocationAndFetchWeather() async {
+  void determineLocationAndFetchWeather(context) async {
     final locationProvider =
         Provider.of<LocationProvider>(context, listen: false);
 
@@ -30,7 +30,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
       var city = locationProvider.currentLocationName!.locality;
       if (city != null) {
         Provider.of<WeatherServiceProvider>(context, listen: false)
-            .fetchWeatherDataByCity(city);
+            .fetchWeatherDataByCity(city, context);
       }
       goToHome();
     } else {
@@ -46,7 +46,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
             TextButton(
               onPressed: () {
                 Navigator.pop(context);
-                determineLocationAndFetchWeather();
+                determineLocationAndFetchWeather(context);
               },
               child: Text('Try Again'),
             ),
@@ -64,7 +64,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
   }
 
   Future<void> goToHome() async {
-    await Future.delayed(Duration(seconds: 3));
+    await Future.delayed(Duration(seconds: 1));
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
