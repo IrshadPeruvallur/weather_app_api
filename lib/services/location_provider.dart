@@ -10,7 +10,7 @@ class LocationProvider extends ChangeNotifier {
   Placemark? _currentLocationName;
   Placemark? get currentLocationName => _currentLocationName;
 
-  Future<void> determinePsition() async {
+  Future<void> determinePosition() async {
     bool serviceEnabled;
     LocationPermission permission;
     serviceEnabled = await Geolocator.isLocationServiceEnabled();

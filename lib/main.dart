@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:weather_app_api/controller/home_provider.dart';
 import 'package:weather_app_api/screen/home_screen.dart';
 import 'package:weather_app_api/screen/loading_screen.dart';
 import 'package:weather_app_api/services/location_provider.dart';
@@ -23,9 +22,6 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(
           create: (context) => WeatherServiceProvider(),
         ),
-        ChangeNotifierProvider(
-          create: (context) => HomeProvier(),
-        )
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
