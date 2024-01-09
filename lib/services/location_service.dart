@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
@@ -12,9 +14,10 @@ class LocationService extends ChangeNotifier {
           return placemarks[0];
         }
       } catch (e) {
-        print('Error fetching location Name');
+        log('Error fetching location Name');
       }
       return null;
     }
+    return null;
   }
 }
