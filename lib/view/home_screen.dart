@@ -50,8 +50,15 @@ class HomeScreen extends StatelessWidget {
               builder: (context, location, weather, child) {
                 return weather.searchController.text.isNotEmpty
                     ? IconButton(
-                        onPressed: () {
-                          weather.searchCity(context);
+                        onPressed: () async {
+                          await weather.searchCity(context);
+                          if (weather.weather == null) {
+                            final snackBar = SnackBar(
+                                backgroundColor: Colors.red,
+                                content: Text("City not found"));
+                            ScaffoldMessenger.of(context)
+                                .showSnackBar(snackBar);
+                          }
                         },
                         icon: Icon(Icons.search))
                     : IconButton(
@@ -86,8 +93,7 @@ class HomeScreen extends StatelessWidget {
                     String locationName =
                         weather.weather?.name?.isNotEmpty == true
                             ? weather.weather!.name.toString()
-                            : location.currentLocationName?.locality ??
-                                'Unknown Location';
+                            : 'Unknown Location';
 
                     return WidgetText(
                       locationName,

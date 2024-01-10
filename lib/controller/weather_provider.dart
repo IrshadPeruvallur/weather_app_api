@@ -27,8 +27,8 @@ class WeatherProvider extends ChangeNotifier {
     return weather;
   }
 
-  void searchCity(BuildContext context) {
-    fetchWeatherDataByCity(searchController.text.trim(), context);
+  searchCity(BuildContext context) async {
+    await fetchWeatherDataByCity(searchController.text.trim(), context);
     searchController.clear();
     notifyListeners();
   }
